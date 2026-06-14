@@ -1,0 +1,24 @@
+{
+  "platform": "douyin-mini-game",
+  "finalName": "星舰突围战",
+  "softwareFullName": "星舰突围战游戏软件 V1.0",
+  "softwareShortName": "星舰突围战",
+  "version": "V1.0",
+  "category": "动作竞技 / 飞行射击",
+  "tag": "科幻",
+  "keywords": [
+    "星舰",
+    "飞行",
+    "射击",
+    "科幻",
+    "突围"
+  ],
+  "intro": "操控星舰躲避弹幕并击败敌人，完成飞行射击挑战。",
+  "detail": "《星舰突围战》是一款飞行射击类动作小游戏。玩家控制飞行单位在屏幕中移动，躲避敌人攻击并发射子弹击败目标。游戏包含玩家控制、敌人生成、子弹碰撞、生命状态和得分反馈等核心模块。",
+  "icon": "抖音上架材料/icon-600.png",
+  "status": "可准备提交",
+  "risk": "需检查射击表现、素材和音效是否为可商用资源。",
+  "appId": "",
+  "auditTicket": "",
+  "auditResult": ""
+}

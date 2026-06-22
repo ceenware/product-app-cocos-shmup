@@ -42,6 +42,7 @@ jobs:
           : > dist/main.min.js
           for file in \
             src/bower_components/phaser-official/build/phaser.min.js \
+            src/js/i18n.js \
             src/js/boot.js \
             src/js/preloader.js \
             src/js/menu.js \

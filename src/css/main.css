@@ -20,3 +20,25 @@ canvas {
   /*width: 100%;*/
   /*border: 4px solid green;*/
 }
+
+.language-switch {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  min-width: 58px;
+  height: 30px;
+  padding: 0 10px;
+  border: 2px solid #fff;
+  border-radius: 0;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  font: bold 13px Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+  line-height: 26px;
+}
+
+.language-switch:focus {
+  outline: 2px solid #f6d365;
+  outline-offset: 2px;
+}

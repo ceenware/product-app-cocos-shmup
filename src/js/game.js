@@ -23,6 +23,7 @@
 		};
 
 		this.gameState = null;
+		this.onLanguageChange = null;
 	}
 
 	Game.prototype = {
@@ -88,21 +89,34 @@
 		createGUI: function () {
 			// GUI
 
-			this.guiText0 = this.add.bitmapText(0, 0, 'minecraftia', 'Get ready');
-			this.guiText0.scale.setTo(CONFIG.PIXEL_RATIO, CONFIG.PIXEL_RATIO); 
-			this.guiText0.x = (this.game.width - this.guiText0.textWidth * CONFIG.PIXEL_RATIO) / 2;
-			this.guiText0.y = (this.game.height- this.guiText0.textHeight * CONFIG.PIXEL_RATIO) / 2;
+			this.guiText0 = this.add.text(this.game.width / 2, this.game.height / 2, '', {
+				font: 'bold 36px Arial, "Microsoft YaHei", "PingFang SC", sans-serif',
+				fill: '#ffffff',
+				align: 'center'
+			});
+			this.guiText0.anchor.setTo(0.5, 0.5);
 			this.guiText0.fixedToCamera = true;
 
-			this.guiText1 = this.add.bitmapText(0, -5 * CONFIG.PIXEL_RATIO, 'minecraftia', '');
-			this.guiText1.scale.setTo(CONFIG.PIXEL_RATIO / 2, CONFIG.PIXEL_RATIO / 2); 
+			this.guiText1 = this.add.text(0, 0, '', {
+				font: 'bold 18px Arial, "Microsoft YaHei", "PingFang SC", sans-serif',
+				fill: '#ffffff',
+				align: 'left'
+			});
 			this.guiText1.fixedToCamera = true;
 
-			this.guiText2 = this.add.bitmapText(0, 32, 'minecraftia', '');
-			this.guiText2.scale.setTo(CONFIG.PIXEL_RATIO / 4, CONFIG.PIXEL_RATIO / 4); 
+			this.guiText2 = this.add.text(0, 32, '', {
+				font: 'bold 13px Arial, "Microsoft YaHei", "PingFang SC", sans-serif',
+				fill: '#ffffff',
+				align: 'left',
+				lineSpacing: -2
+			});
 			this.guiText2.fixedToCamera = true;
 
+			this.updateStateText();
 			this.updateGUI();
+
+			this.onLanguageChange = this.updateLanguage.bind(this);
+			window.addEventListener('firsttry:languagechange', this.onLanguageChange);
 		},
 
 		createWorld: function () {
@@ -494,14 +508,14 @@
 
 			this.nextEnemyGroundAt[0] = this.time.now + this.enemyDelayGround[0];
 
-			this.guiText0.setText('');
+			this.updateStateText();
 		},
 
 		statePlay2Postplay: function () {
 
 			this.gameState = this.STATE.postplay;
 
-			this.guiText0.setText('Game over');
+			this.updateStateText();
 		},
 
 		update: function () {
@@ -709,21 +723,51 @@
 		updateGUI: function () {
 
 			var gui = '';
+			var i18n = window['firsttry'].i18n;
 
 			var life = '';
 			for (var i = 0; i < Math.round(this.player.health / 20); i++) {
 				life += '@';
 			}
 
-			gui += 'HP  ' + life + '\n';
+			gui += i18n.t('stats.hp') + '  ' + life + '\n';
 
-			gui += 'STR ' + this.player.playerStats.strength + '\n';
-			gui += 'RAT ' + this.player.playerStats.rate + '\n';
-			gui += 'SPD ' + this.player.playerStats.speed + '\n';
-			gui += 'ACC ' + this.player.playerStats.accel + '\n';
+			gui += i18n.t('stats.strength') + ' ' + this.player.playerStats.strength + '\n';
+			gui += i18n.t('stats.rate') + ' ' + this.player.playerStats.rate + '\n';
+			gui += i18n.t('stats.speed') + ' ' + this.player.playerStats.speed + '\n';
+			gui += i18n.t('stats.accel') + ' ' + this.player.playerStats.accel + '\n';
 
 			this.guiText1.setText(this.score + '');
 			this.guiText2.setText(gui);
+		},
+
+		updateStateText: function () {
+
+			var i18n = window['firsttry'].i18n;
+			var text = '';
+
+			if (this.gameState === this.STATE.preplay) {
+				text = i18n.t('getReady');
+
+			} else if (this.gameState === this.STATE.postplay) {
+				text = i18n.t('gameOver');
+			}
+
+			this.guiText0.setText(text);
+		},
+
+		updateLanguage: function () {
+
+			this.updateStateText();
+			this.updateGUI();
+		},
+
+		shutdown: function () {
+
+			if (this.onLanguageChange) {
+				window.removeEventListener('firsttry:languagechange', this.onLanguageChange);
+				this.onLanguageChange = null;
+			}
 		},
 
 		updateBackground: function (delta) {

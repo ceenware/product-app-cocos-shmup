@@ -6,6 +6,8 @@ window.onload = function () {
   var game
     , ns = window['firsttry'];
 
+  ns.i18n.createSwitcher();
+
   game = new Phaser.Game(
   	CONFIG.GAME_WIDTH * CONFIG.PIXEL_RATIO, 
   	CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO, 

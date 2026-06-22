@@ -16,7 +16,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --openssl-legacy-provider
       PUBLISH_DIR: dist
     steps:
       - name: Checkout source

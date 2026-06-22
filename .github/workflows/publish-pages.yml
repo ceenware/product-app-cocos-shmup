@@ -16,10 +16,25 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     env:
+      NODE_OPTIONS: --openssl-legacy-provider
       PUBLISH_DIR: dist
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 10
+
+      - name: Install dependencies
+        run: npm install --no-audit --cache "$RUNNER_TEMP/npm-cache"
+
+      - name: Install browser libraries
+        run: ./node_modules/.bin/bower install --allow-root --config.interactive=false
+
+      - name: Build
+        run: npm run build
 
       - name: Publish to gh-pages
         env:
@@ -40,3 +55,8 @@ jobs:
           git add -A
           git commit -m "Publish pages ${GITHUB_SHA::7}"
           git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages:gh-pages
+
+      - name: Cleanup workspace
+        if: always()
+        run: |
+          rm -rf node_modules src/bower_components dist "$RUNNER_TEMP/npm-cache"

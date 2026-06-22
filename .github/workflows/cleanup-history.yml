@@ -1,0 +1,73 @@
+name: Cleanup History
+
+on:
+  workflow_run:
+    workflows:
+      - Publish Pages
+      - pages-build-deployment
+    types:
+      - completed
+
+permissions:
+  actions: write
+  contents: read
+  deployments: write
+
+jobs:
+  cleanup-history:
+    name: Delete historical logs and artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete historical logs and artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          TRIGGER_RUN_ID: ${{ github.event.workflow_run.id }}
+          CLEANUP_RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t run_ids < <(
+            gh api "repos/${REPOSITORY}/actions/runs" --paginate \
+              --jq ".workflow_runs[] | select(.status == \"completed\") | select(.id != ${TRIGGER_RUN_ID}) | select(.id != ${CLEANUP_RUN_ID}) | .id"
+          )
+
+          for run_id in "${run_ids[@]}"; do
+            mapfile -t artifact_ids < <(
+              gh api "repos/${REPOSITORY}/actions/runs/${run_id}/artifacts" --paginate \
+                --jq ".artifacts[].id"
+            )
+
+            for artifact_id in "${artifact_ids[@]}"; do
+              gh api -X DELETE "repos/${REPOSITORY}/actions/artifacts/${artifact_id}" || true
+            done
+
+            gh api -X DELETE "repos/${REPOSITORY}/actions/runs/${run_id}/logs" || true
+            gh api -X DELETE "repos/${REPOSITORY}/actions/runs/${run_id}" || true
+          done
+
+          mapfile -t cache_ids < <(
+            gh api "repos/${REPOSITORY}/actions/caches" --paginate \
+              --jq ".actions_caches[].id"
+          )
+
+          for cache_id in "${cache_ids[@]}"; do
+            gh api -X DELETE "repos/${REPOSITORY}/actions/caches/${cache_id}" || true
+          done
+
+          mapfile -t deployment_ids < <(
+            gh api "repos/${REPOSITORY}/deployments" --paginate \
+              --jq ".[].id"
+          )
+
+          for deployment_id in "${deployment_ids[@]}"; do
+            latest_state="$(
+              gh api "repos/${REPOSITORY}/deployments/${deployment_id}/statuses" \
+                --jq '.[0].state // ""' 2>/dev/null || true
+            )"
+
+            if [ "$latest_state" = "inactive" ]; then
+              gh api -X DELETE "repos/${REPOSITORY}/deployments/${deployment_id}" || true
+            fi
+          done

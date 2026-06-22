@@ -1,6 +1,8 @@
 # shmup
 A shooter game based on Phaser framework
 
+站点地址：https://ceenware.github.io/product-app-cocos-shmup/
+
 [PLAY IT! >](http://chmood.github.io/shmup/dist/)
 
 ## CONCEPT

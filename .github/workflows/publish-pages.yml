@@ -24,16 +24,42 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 10
+          node-version: 22
 
       - name: Install dependencies
-        run: npm install --no-audit --cache "$RUNNER_TEMP/npm-cache"
+        run: npm install --no-save --no-audit --cache "$RUNNER_TEMP/npm-cache" bower@1.8.14
 
       - name: Install browser libraries
         run: ./node_modules/.bin/bower install --allow-root --config.interactive=false
 
       - name: Build
-        run: npm run build
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir -p dist
+          cp -R src/assets dist/assets
+          cp src/css/main.css dist/main.min.css
+          cat \
+            src/bower_components/phaser-official/build/phaser.min.js \
+            src/js/boot.js \
+            src/js/preloader.js \
+            src/js/menu.js \
+            src/js/class/spriter.js \
+            src/js/class/actor.js \
+            src/js/class/mob.js \
+            src/js/class/shoot.js \
+            src/js/class/enemy.js \
+            src/js/class/flying_mobs.js \
+            src/js/class/turret.js \
+            src/js/class/player.js \
+            src/js/class/bullet.js \
+            src/js/class/collectible.js \
+            src/js/class/cloud.js \
+            src/js/game.js \
+            src/js/main.js \
+            > dist/main.min.js
+          cp src/index.html dist/index.html
+          perl -0pi -e 's#<!-- build:css main\.min\.css -->.*?<!-- /build -->#<link rel="stylesheet" href="main.min.css">#s; s#<!-- build:remove -->.*?<!-- /build -->##s; s#<!-- build:js main\.min\.js -->.*?<!-- /build -->#<script src="main.min.js"></script>#s' dist/index.html
 
       - name: Publish to gh-pages
         env:

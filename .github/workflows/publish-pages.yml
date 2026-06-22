@@ -39,7 +39,8 @@ jobs:
           mkdir -p dist
           cp -R src/assets dist/assets
           cp src/css/main.css dist/main.min.css
-          cat \
+          : > dist/main.min.js
+          for file in \
             src/bower_components/phaser-official/build/phaser.min.js \
             src/js/boot.js \
             src/js/preloader.js \
@@ -56,8 +57,11 @@ jobs:
             src/js/class/collectible.js \
             src/js/class/cloud.js \
             src/js/game.js \
-            src/js/main.js \
-            > dist/main.min.js
+            src/js/main.js
+          do
+            cat "$file" >> dist/main.min.js
+            printf '\n' >> dist/main.min.js
+          done
           cp src/index.html dist/index.html
           perl -0pi -e 's#<!-- build:css main\.min\.css -->.*?<!-- /build -->#<link rel="stylesheet" href="main.min.css">#s; s#<!-- build:remove -->.*?<!-- /build -->##s; s#<!-- build:js main\.min\.js -->.*?<!-- /build -->#<script src="main.min.js"></script>#s' dist/index.html
 

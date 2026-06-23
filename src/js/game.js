@@ -45,8 +45,7 @@
 			for (i = 0; i < CONFIG.CLOUDPOOL_SIZE; i++) {
 				o = new window['firsttry'].Cloud(this);
 				this.cloudPool.add(o);
-				o.exists = false; 
-				o.alive = false;
+				o.kill();
 			}
 
 			this.nextCloudAt = 0;
@@ -59,8 +58,7 @@
 			for (i = 0; i < CONFIG.BONUSPOOL_SIZE; i++) {
 				o = new window['firsttry'].Collectible(this, 'bonus_cube');
 				this.bonusPool.add(o);
-				o.exists = false; 
-				o.alive = false;
+				o.kill();
 			}
 
 			// MOBS
@@ -379,8 +377,7 @@
 			for (i = 0; i < CONFIG.BULLETPOOL_SIZE_ENNEMY; i++) {
 				o = new window['firsttry'].Bullet(this, 0);
 				this.bulletPoolsMob[0].add(o);
-				o.exists = false; 
-				o.alive = false;
+				o.kill();
 			}
 
 			// Mid bullets
@@ -389,8 +386,7 @@
 			for (i = 0; i < CONFIG.BULLETPOOL_SIZE_ENNEMY; i++) {
 				o = new window['firsttry'].Bullet(this, 1);
 				this.bulletPoolsMob[1].add(o);
-				o.exists = false; 
-				o.alive = false;
+				o.kill();
 			}
 
 
@@ -404,8 +400,7 @@
 			for (i = 0; i < CONFIG.MOBPOOL_SIZE; i++) {
 				mob = new window['firsttry'].Turret(this);
 				this.mobPoolsGround[0].add(mob);
-				mob.exists = false; 
-				mob.alive = false;
+				mob.kill();
 			}
 
 			// FLYING ENEMIES
@@ -418,8 +413,7 @@
 			for (i = 0; i < CONFIG.MOBPOOL_SIZE; i++) {
 				mob = new window['firsttry'].Plane(this);
 				this.mobPools[0].add(mob);
-				mob.exists = false; 
-				mob.alive = false;
+				mob.kill();
 			}
 
 			// Vessels
@@ -428,8 +422,7 @@
 			for (i = 0; i < CONFIG.MOBPOOL_SIZE; i++) {
 				mob = new window['firsttry'].Vessel(this);
 				this.mobPools[1].add(mob);
-				mob.exists = false; 
-				mob.alive = false;
+				mob.kill();
 			}
 
 			// Flagships
@@ -438,8 +431,7 @@
 			for (i = 0; i < CONFIG.MOBPOOL_SIZE; i++) {
 				mob = new window['firsttry'].Flagship(this);
 				this.mobPools[2].add(mob);
-				mob.exists = false; 
-				mob.alive = false;
+				mob.kill();
 			}
 
 
@@ -499,14 +491,15 @@
 		statePreplay2Play: function () {
 
 			this.gameState = this.STATE.play;
+			var now = this.game.time.now;
 
 			// Reset enemy next spawn
 
-			this.nextEnemyAt[0] = this.time.now + this.enemyDelay[0];	// TODO in a loop
-			this.nextEnemyAt[1] = this.time.now + this.enemyDelay[1];
-			this.nextEnemyAt[2] = this.time.now + this.enemyDelay[2];
+			this.nextEnemyAt[0] = now + this.enemyDelay[0];	// TODO in a loop
+			this.nextEnemyAt[1] = now + this.enemyDelay[1];
+			this.nextEnemyAt[2] = now + this.enemyDelay[2];
 
-			this.nextEnemyGroundAt[0] = this.time.now + this.enemyDelayGround[0];
+			this.nextEnemyGroundAt[0] = now + this.enemyDelayGround[0];
 
 			this.updateStateText();
 		},
@@ -544,9 +537,9 @@
 
 			for (i = 0; i < this.mobPools.length; i++) {
 
-				if (this.nextEnemyAt[i] < this.time.now && this.mobPools[i].countDead() > 0) {
+				if (this.nextEnemyAt[i] < this.game.time.now && this.mobPools[i].countDead() > 0) {
 
-					this.nextEnemyAt[i] = this.time.now + this.enemyDelay[i];
+					this.nextEnemyAt[i] = this.game.time.now + this.enemyDelay[i];
 
 					enemy = this.mobPools[i].getFirstExists(false);
 					enemy.revive();
@@ -613,9 +606,9 @@
 
 			var cloud;
 
-			if (this.nextCloudAt < this.time.now && this.cloudPool.countDead() > 0) {
+			if (this.nextCloudAt < this.game.time.now && this.cloudPool.countDead() > 0) {
 
-				this.nextCloudAt = this.time.now + this.cloudDelay;
+				this.nextCloudAt = this.game.time.now + this.cloudDelay;
 
 				cloud = this.cloudPool.getFirstExists(false);
 				cloud.revive();
@@ -821,7 +814,12 @@
 
 		onInputDown: function () {
 
-			this.game.state.start('menu');
+			if (this.gameState === this.STATE.preplay) {
+				this.statePreplay2Play();
+
+			} else if (this.gameState === this.STATE.postplay) {
+				this.game.state.start('menu');
+			}
 		},
 
 		// RENDER

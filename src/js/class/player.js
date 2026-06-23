@@ -98,6 +98,8 @@
 
 		var cursors = this.state.cursors;
 		var keyboard = this.state.input.keyboard;
+		var pointer = this.state.input.activePointer;
+		var pointerDown = pointer && pointer.isDown;
 
 		if (this.state.gameState === 0) {	// Pre-play
 
@@ -117,26 +119,50 @@
 
 			// Move
 
-			if (cursors.left.isDown && this.x > 20 * CONFIG.PIXEL_RATIO) {
-				this.moveLeft(delta);
-			} else if (cursors.right.isDown && this.x < (CONFIG.WORLD_WIDTH * 24 - 20) * CONFIG.PIXEL_RATIO) {
-				this.moveRight(delta);
-			} else {
-				this.floatH(delta);
-			}
+			if (pointerDown) {
+				var deadZone = 8 * CONFIG.PIXEL_RATIO;
 
-			if (cursors.up.isDown && this.y > 30 * CONFIG.PIXEL_RATIO) {
-				this.moveUp(delta);
-			} else if (cursors.down.isDown && this.y < (CONFIG.GAME_HEIGHT - 20) * CONFIG.PIXEL_RATIO) {
-				this.moveDown(delta);
-			} else {
-				this.floatV(delta);
-			}
+				if (pointer.x < this.x - deadZone && this.x > 20 * CONFIG.PIXEL_RATIO) {
+					this.moveLeft(delta);
+				} else if (pointer.x > this.x + deadZone && this.x < (CONFIG.WORLD_WIDTH * 24 - 20) * CONFIG.PIXEL_RATIO) {
+					this.moveRight(delta);
+				} else {
+					this.floatH(delta);
+				}
 
-			// Fire
+				if (pointer.y < this.y - deadZone && this.y > 30 * CONFIG.PIXEL_RATIO) {
+					this.moveUp(delta);
+				} else if (pointer.y > this.y + deadZone && this.y < (CONFIG.GAME_HEIGHT - 20) * CONFIG.PIXEL_RATIO) {
+					this.moveDown(delta);
+				} else {
+					this.floatV(delta);
+				}
 
-			if (keyboard.isDown(Phaser.Keyboard.W)) {
 				this.fire();
+
+			} else {
+
+				if (cursors.left.isDown && this.x > 20 * CONFIG.PIXEL_RATIO) {
+					this.moveLeft(delta);
+				} else if (cursors.right.isDown && this.x < (CONFIG.WORLD_WIDTH * 24 - 20) * CONFIG.PIXEL_RATIO) {
+					this.moveRight(delta);
+				} else {
+					this.floatH(delta);
+				}
+
+				if (cursors.up.isDown && this.y > 30 * CONFIG.PIXEL_RATIO) {
+					this.moveUp(delta);
+				} else if (cursors.down.isDown && this.y < (CONFIG.GAME_HEIGHT - 20) * CONFIG.PIXEL_RATIO) {
+					this.moveDown(delta);
+				} else {
+					this.floatV(delta);
+				}
+
+				// Fire
+
+				if (keyboard.isDown(Phaser.Keyboard.W)) {
+					this.fire();
+				}
 			}
 		}
 	};

@@ -11,7 +11,7 @@
       switchTo: '中文',
       switchLabel: 'Switch language',
       menuTitle: 'PHASER SHMUP',
-      controls: '_______________\nControls\nW : shoot / start\nArrows : move\nTap : start\n_______________',
+      controls: '_______________\nControls\nW : shoot / start\nArrows : move\nTouch : start / move + shoot\n_______________',
       getReady: 'Get ready',
       gameOver: 'Game over',
       stats: {
@@ -28,7 +28,7 @@
       switchTo: 'EN',
       switchLabel: '切换语言',
       menuTitle: '飞行射击',
-      controls: '_______________\n操作\nW：射击 / 开始\n方向键：移动\n点击：开始\n_______________',
+      controls: '_______________\n操作\nW：射击 / 开始\n方向键：移动\n触摸：开始 / 移动 + 射击\n_______________',
       getReady: '准备',
       gameOver: '游戏结束',
       stats: {

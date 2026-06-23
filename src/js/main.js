@@ -9,15 +9,14 @@ window.onload = function () {
   ns.i18n.createSwitcher();
 
   game = new Phaser.Game(
-  	CONFIG.GAME_WIDTH * CONFIG.PIXEL_RATIO, 
-  	CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO, 
-  	Phaser.AUTO, 
-  	// 'firsttry-game', 
-  	'', 
-  	null, 
-  	false, 
-  	false
-  	);
+    CONFIG.GAME_WIDTH * CONFIG.PIXEL_RATIO,
+    CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO,
+    Phaser.AUTO,
+    'firsttry-game',
+    null,
+    false,
+    false
+    );
 
   game.CONFIG = CONFIG;
 

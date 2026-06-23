@@ -42,7 +42,7 @@
 				this.state.player.alive && 	// Player is alive
 				this.y < this.state.player.y - 100 * CONFIG.PIXEL_RATIO && // Enemy above player
 
-				this.state.time.now > this.nextShotAt && 
+				this.state.game.time.now > this.nextShotAt &&
 				this.state.bulletPoolsMob[this.bulletType].countDead() > 0
 				) {
 			this.shoot(this.shootConfig);
@@ -53,7 +53,7 @@
 
 		this.shoots.push(new window['firsttry'].Shoot(this.state, this, shootConfig));
 
-		this.nextShotAt = this.state.time.now + this.shootDelay;
+		this.nextShotAt = this.state.game.time.now + this.shootDelay;
 	};
 
 	Enemy.prototype.die = function () {
